@@ -21,7 +21,6 @@ Add unicorn restart task hook:
 ```ruby
 # Lazy eval so the current_path is set properly
 set(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
-set(:unicorn_binary)  { "bundle exec unicorn_rails -c #{unicorn_config} -E #{rails_env} -D" } # Lazy eval so rails_env is set properly
 set(:unicorn_pid)     { "#{current_path}/tmp/pids/unicorn.pid" }
 set(:unicorn_old_pid) { "#{current_path}/tmp/pids/unicorn.pid.oldbin" }
 
