@@ -1,3 +1,5 @@
+set(:unicorn_binary)  { "bundle exec unicorn_rails -c #{unicorn_config} -E #{rails_env} -D" }
+
 namespace :unicorn do
   desc "start unicorn"
   task :start, :roles => :app, :except => { :no_release => true } do
