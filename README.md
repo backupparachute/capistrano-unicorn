@@ -25,6 +25,8 @@ set(:unicorn_pid)     { "#{current_path}/tmp/pids/unicorn.pid" }
 set(:unicorn_old_pid) { "#{current_path}/tmp/pids/unicorn.pid.oldbin" }
 
 # Add Unicorn restart hook
+after "deploy:stop", "unicorn:stop"
+after "deploy:stop", "unicorn:start"
 after "deploy:restart", "unicorn:reload"
 ```
 
