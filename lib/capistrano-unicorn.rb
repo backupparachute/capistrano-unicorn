@@ -47,7 +47,12 @@ Capistrano::Configuration.instance.load do
 
 
   def remote_file_exists?(full_path)
-    'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+    begin
+      'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+    rescue
+      puts "remote file DOES NOT exist..."
+      return false
+    end
   end
 
   def pid_running?(pid_file)
