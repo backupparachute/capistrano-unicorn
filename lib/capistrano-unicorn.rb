@@ -7,7 +7,7 @@ Capistrano::Configuration.instance.load do
   namespace :unicorn do
     desc "start unicorn"
     task :start, :roles => :app, :except => { :no_release => true } do
-      puts "<><><><><><><><><><><><><>"
+      puts "<><><><><><><><><><><><><> "
       puts "STARING UNICORN..."
       run "cd #{current_path} && #{unicorn_binary}"
     end
