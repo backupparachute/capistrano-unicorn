@@ -4,11 +4,9 @@ module Capistrano
   module Unicorn
     # Your code goes here...
 
-    unless Capistrano::Configuration.instance
-      return
-    end
-
     config = Capistrano::Configuration.instance
+
+    if config
 
     config.load do
       # stuff here...
@@ -84,6 +82,7 @@ module Capistrano
     end
 
 
+  end
 
   end
 end
