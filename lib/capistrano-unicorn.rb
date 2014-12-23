@@ -1,3 +1,4 @@
+require 'capistrano'
 
 Capistrano::Configuration.instance.load do
   # stuff here...
