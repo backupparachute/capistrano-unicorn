@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+# lib = File.expand_path('../lib', __FILE__)
+# $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |gem|
   gem.name        = "capistrano-unicorn"
-  gem.version     = "0.1.7"
+  gem.version     = "0.1.8"
   gem.author      = "Kyle Miller"
   gem.email       = "github@backupparachute.com"
   gem.homepage    = "https://github.com/backupparachute/capistrano-unicorn"
