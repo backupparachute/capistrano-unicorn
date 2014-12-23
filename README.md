@@ -1,34 +1,31 @@
-# Capistrano Unicorn
+# Capistrano::Unicorn
 
-Capistrano plugin that integrates Unicorn tasks into capistrano deployment script.
+TODO: Write a gem description
 
-### Setup
+## Installation
 
-Add the library to your `Gemfile`:
-
-```ruby
-gem 'capistrano-unicorn', :require => false
-```
-
-And load it into your deployment script `config/deploy.rb`:
+Add this line to your application's Gemfile:
 
 ```ruby
-require 'capistrano-unicorn'
+gem 'capistrano-unicorn'
 ```
 
-Add unicorn restart task hook:
+And then execute:
 
-```ruby
-# Lazy eval so the current_path is set properly
-set(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
-set(:unicorn_pid)     { "#{current_path}/tmp/pids/unicorn.pid" }
-set(:unicorn_old_pid) { "#{current_path}/tmp/pids/unicorn.pid.oldbin" }
+    $ bundle
 
-# Add Unicorn restart hook
-after "deploy:stop", "unicorn:stop"
-after "deploy:stop", "unicorn:start"
-after "deploy:restart", "unicorn:reload"
-```
+Or install it yourself as:
 
-### Acknowledgements
-loosely related to and inspired by https://github.com/sosedoff/capistrano-unicorn
+    $ gem install capistrano-unicorn
+
+## Usage
+
+TODO: Write usage instructions here
+
+## Contributing
+
+1. Fork it ( https://github.com/[my-github-username]/capistrano-unicorn/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
