@@ -4,7 +4,7 @@
 
 Gem::Specification.new do |gem|
   gem.name        = "capistrano-unicorn"
-  gem.version     = "0.1.8"
+  gem.version     = "0.1.9"
   gem.author      = "Kyle Miller"
   gem.email       = "github@backupparachute.com"
   gem.homepage    = "https://github.com/backupparachute/capistrano-unicorn"
