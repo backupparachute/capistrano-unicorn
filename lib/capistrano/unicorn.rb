@@ -4,6 +4,10 @@ module Capistrano
   module Unicorn
     # Your code goes here...
 
+    unless Capistrano::Configuration.instance
+      return
+    end
+
     config = Capistrano::Configuration.instance
 
     config.load do
@@ -78,8 +82,8 @@ module Capistrano
       end
 
     end
-    
-    
-    
+
+
+
   end
 end
