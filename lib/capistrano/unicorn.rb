@@ -11,7 +11,10 @@ module Capistrano
     config.load do
       # stuff here...
 
+      _cset(:unicorn_config)  { "#{current_path}/config/unicorn.rb" }
       _cset(:unicorn_binary)  { "bundle exec unicorn_rails -c #{unicorn_config} -E #{rails_env} -D" }
+      _cset(:unicorn_pid)     { "#{current_path}/tmp/pids/unicorn.pid" }
+      _cset(:unicorn_old_pid) { "#{current_path}/tmp/pids/unicorn.pid.oldbin" }
 
       namespace :unicorn do
         desc "start unicorn"
