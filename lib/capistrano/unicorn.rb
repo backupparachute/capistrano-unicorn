@@ -26,30 +26,30 @@ module Capistrano
         desc "stop unicorn"
         task :stop, :roles => :app, :except => { :no_release => true } do
           if pid_running?(unicorn_pid)
-            run "kill `cat #{unicorn_pid}`" if remote_file_exists?(unicorn_pid)
+            run "if [ -e #{unicorn_pid} ]; then kill `cat #{unicorn_pid}`; echo 'running...'; fi"
           end
         end
         desc "graceful stop unicorn"
         task :graceful_stop, :roles => :app, :except => { :no_release => true } do
           if pid_running?(unicorn_pid)
-            run "if [ -e #{unicorn_pid} ]; then kill -s QUIT `cat #{unicorn_pid}`; "
+            run "if [ -e #{unicorn_pid} ]; then kill -s QUIT `cat #{unicorn_pid}`; echo 'running...'; fi"
           end
         end
         desc "graceful stop OLD unicorn"
         task :graceful_stop_old, :roles => :app, :except => { :no_release => true } do
           if pid_running?(unicorn_old_pid)
-            run "if [ -e #{unicorn_old_pid} ]; then kill -s QUIT `cat #{unicorn_old_pid}`; fi"
+            run "if [ -e #{unicorn_old_pid} ]; then kill -s QUIT `cat #{unicorn_old_pid}`; echo 'running...'; fi"
           end
         end
         desc "reload unicorn"
         task :reload, :roles => :app, :except => { :no_release => true } do
           if pid_running?(unicorn_pid)
             puts "UNICORN RUNNING, reloading"
-            run "if [ -e #{unicorn_pid} ]; then kill -s USR2 `cat #{unicorn_pid}`; fi"
+            run "if [ -e #{unicorn_pid} ]; then kill -s USR2 `cat #{unicorn_pid}`; echo 'running...'; fi"
             unicorn.graceful_stop_old
           elsif remote_file_exists?(unicorn_pid)
             puts "REMOVING old UNICORN PID"
-            run "if [ -e #{unicorn_pid} ]; then rm #{unicorn_pid}; fi"
+            run "if [ -e #{unicorn_pid} ]; then rm #{unicorn_pid}; echo 'removing...'; fi"
             unicorn.start
           else
             unicorn.start
