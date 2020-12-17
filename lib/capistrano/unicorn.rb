@@ -61,7 +61,7 @@ module Capistrano
       def remote_file_exists?(full_path)
         begin
           #'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
-          run("if [ -e #{full_path} ]; then echo 'true'; fi")
+          run("if [ -e #{full_path} ]; then echo 0; else echo 1; fi")
           # results = {}
           # run "if [ -e #{full_path} ]; then echo 'true'; fi" do |channel, stream, data|
             # if stream == :out
@@ -81,7 +81,10 @@ module Capistrano
       def pid_running?(pid_file)
         begin
           #retval = capture("ps -ef | grep `cat #{pid_file}` | grep -v grep").strip
-          run("ps -ef | grep `cat #{pid_file}` | grep -v grep")
+          puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+          # run("ps -ef | grep `cat #{pid_file}` | grep -v grep")
+          run("pgrep -P `cat #{pid_file}` && echo 0 || echo 1")
+          puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
           # run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
       #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
       #       puts "PID RUNNING: #{data}"
