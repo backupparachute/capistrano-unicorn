@@ -66,6 +66,7 @@ module Capistrano
             # if stream == :out
               #results[channel[:host]] = [] unless results.key?(channel[:host])
               # results[channel[:host]] << data if stream == :out
+              puts "remote file reponse: #{data}" if stream == :out
               return 'true' == data.strip if stream == :out
             # end
           end
@@ -77,11 +78,13 @@ module Capistrano
 
       def pid_running?(pid_file)
         begin
-          retval = capture("ps -ef | grep `cat #{pid_file}` | grep -v grep").strip
-          puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-          puts "PID RUNNING: #{retval}"
-          puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-          return retval
+          #retval = capture("ps -ef | grep `cat #{pid_file}` | grep -v grep").strip
+          run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
+            puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+            puts "PID RUNNING: #{data}"
+            puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+            return data.strip if stream == :out
+          end
         rescue
           puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
           puts "PID DOWN..."
