@@ -63,7 +63,9 @@ module Capistrano
       def remote_file_exists?(full_path)
         begin
           #'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
-          run("if [ -e #{full_path} ]; then echo 0; else echo 1; fi")
+          v = run("if [ -e #{full_path} ]; then echo true; else echo false; fi")
+          
+          puts "???????? reponse from run: #{v}"
           # results = {}
           # run "if [ -e #{full_path} ]; then echo 'true'; fi" do |channel, stream, data|
             # if stream == :out
