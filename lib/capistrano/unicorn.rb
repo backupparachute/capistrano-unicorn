@@ -61,15 +61,17 @@ module Capistrano
       def remote_file_exists?(full_path)
         begin
           #'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
-          results = {}
-          run "if [ -e #{full_path} ]; then echo 'true'; fi" do |channel, stream, data|
+          run("if [ -e #{full_path} ]; then echo 'true'; fi")
+          # results = {}
+          # run "if [ -e #{full_path} ]; then echo 'true'; fi" do |channel, stream, data|
             # if stream == :out
               #results[channel[:host]] = [] unless results.key?(channel[:host])
               # results[channel[:host]] << data if stream == :out
-              puts "remote file reponse: #{data}" if stream == :out
-              return 'true' == data.strip if stream == :out
+              # puts "remote file reponse: #{data}" if stream == :out
+              # return 'true' == data.strip if stream == :out
             # end
-          end
+          # end
+          return true
         rescue
           puts "remote file DOES NOT exist..."
           return false
@@ -79,12 +81,14 @@ module Capistrano
       def pid_running?(pid_file)
         begin
           #retval = capture("ps -ef | grep `cat #{pid_file}` | grep -v grep").strip
-          run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
-            puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-            puts "PID RUNNING: #{data}"
-            puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-            return data.strip if stream == :out
-          end
+          run("ps -ef | grep `cat #{pid_file}` | grep -v grep")
+          # run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
+      #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+      #       puts "PID RUNNING: #{data}"
+      #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+      #       return data.strip if stream == :out
+      #     end
+          return true
         rescue
           puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
           puts "PID DOWN..."
