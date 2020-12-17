@@ -60,7 +60,15 @@ module Capistrano
 
       def remote_file_exists?(full_path)
         begin
-          'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+          #'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+          results = {}
+          run "if [ -e #{full_path} ]; then echo 'true'; fi" do |channel, stream, data|
+            # if stream == :out
+              #results[channel[:host]] = [] unless results.key?(channel[:host])
+              # results[channel[:host]] << data if stream == :out
+              return 'true' == data.strip if stream == :out
+            # end
+          end
         rescue
           puts "remote file DOES NOT exist..."
           return false
