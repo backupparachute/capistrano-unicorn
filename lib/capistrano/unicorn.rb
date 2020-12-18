@@ -77,7 +77,7 @@ module Capistrano
     #       end
         # end
         
-      end #end of reload task
+        end #end of reload task
 
       def remote_file_exists?(full_path)
         # begin
@@ -141,7 +141,7 @@ module Capistrano
     end # end of namespace
 
   end #end of config if
-  
-  end
+end
+end
   
 end
