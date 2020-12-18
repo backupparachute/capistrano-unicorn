@@ -25,21 +25,83 @@ module Capistrano
         end
         desc "stop unicorn"
         task :stop, :roles => :app, :except => { :no_release => true } do
-          if pid_running?(unicorn_pid)
-            run "kill `cat #{unicorn_pid}`"
-          end
+          resp = pid_running?(unicorn_pid)
+            # run "kill `cat #{unicorn_pid}`"
+            
+            find_servers_for_task(current_task).each do |current_server|
+            
+              begin
+              
+                retval = scrub_exit_value(current_server.host, resp)
+            
+                puts " EVAL unicorn PID status for host: #{current_server.host} = #{retval}"
+            
+                if retval == 0
+                  puts "#{current_server.host} :: UNICORN RUNNING, stopping..."
+                  run "kill `cat #{unicorn_pid}`", :hosts => current_server.host
+                end
+            
+            rescue
+                puts "#{current_server.host} :: ERROR processing UNICORN reload...."
+            end
+            
+            
+            end # end of find servers
+            
         end
         desc "graceful stop unicorn"
         task :graceful_stop, :roles => :app, :except => { :no_release => true } do
-          if remote_file_exists(unicorn_pid) && pid_running?(unicorn_pid)
-            run "kill -s QUIT `cat #{unicorn_pid}`"
+          # if remote_file_exists(unicorn_pid) && pid_running?(unicorn_pid)
+          #   run "kill -s QUIT `cat #{unicorn_pid}`"
+          # end
+          
+          resp = pid_running?(unicorn_pid)
+          
+          find_servers_for_task(current_task).each do |current_server|
+          
+            begin
+            
+              retval = scrub_exit_value(current_server.host, resp)
+          
+              puts " EVAL unicorn PID status for host: #{current_server.host} = #{retval}"
+          
+              if retval == 0
+                puts "#{current_server.host} :: UNICORN RUNNING, graceful stop..."
+                run "kill -s QUIT `cat #{unicorn_pid}`"
+              end
+          
+          rescue
+              puts "#{current_server.host} :: ERROR processing UNICORN reload...."
           end
+          
+          end # end of find servers
+          
         end
         desc "graceful stop OLD unicorn"
         task :graceful_stop_old, :roles => :app, :except => { :no_release => true } do
-          if remote_file_exists(unicorn_old_pid) && pid_running?(unicorn_old_pid)
-            run "kill -s QUIT `cat #{unicorn_old_pid}`"
+          # if remote_file_exists(unicorn_old_pid) && pid_running?(unicorn_old_pid)
+            # run "kill -s QUIT `cat #{unicorn_old_pid}`"
+          # end
+          
+          resp = pid_running?(unicorn_old_pid)
+          find_servers_for_task(current_task).each do |current_server|
+          
+            begin
+            
+              retval = scrub_exit_value(current_server.host, resp)
+          
+              puts " EVAL unicorn PID status for host: #{current_server.host} = #{retval}"
+          
+              if retval == 0
+                puts "#{current_server.host} :: UNICORN RUNNING, graceful stop OLD..."
+                run "kill -s QUIT `cat #{unicorn_old_pid}`"
+              end
+          
+          rescue
+              puts "#{current_server.host} :: ERROR processing UNICORN reload...."
           end
+          
+          end # end of find servers
         end
         desc "reload unicorn"
         task :reload, :roles => :app, :except => { :no_release => true } do
@@ -48,44 +110,44 @@ module Capistrano
           
           find_servers_for_task(current_task).each do |current_server|
             
-            retval = resp[current_server.host]
+            begin
+              
+              retval = scrub_exit_value(current_server.host, resp)
             
-            puts " EVAL unicorn status for host: #{current_server.host} = #{retval}"
+              puts " EVAL unicorn PID status for host: #{current_server.host} = #{retval}"
             
-            if retval == 0
-              puts "#{current_server.host} :: UNICORN RUNNING, reloading"
-              run "kill -s USR2 `cat #{unicorn_pid}`", :hosts => current_server.host
-            elsif retval == 2
-              puts "#{current_server.host} :: NOT RUNNING, but file exists..."
-              puts "#{current_server.host} :: REMOVING old UNICORN PID"
-              run "rm #{unicorn_pid}", :hosts => current_server.host
-              run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
-            else
-              puts "#{current_server.host} :: STARTING UNICORN...."
-              run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
-            end
+              if retval == 0
+                puts "#{current_server.host} :: UNICORN RUNNING, reloading"
+                run "kill -s USR2 `cat #{unicorn_pid}`", :hosts => current_server.host
+              elsif retval == 2
+                puts "#{current_server.host} :: NOT RUNNING, but file exists..."
+                puts "#{current_server.host} :: REMOVING old UNICORN PID"
+                run "rm #{unicorn_pid}", :hosts => current_server.host
+                run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
+              else
+                puts "#{current_server.host} :: STARTING UNICORN...."
+                run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
+              end
+            
+          rescue
+              puts "#{current_server.host} :: ERROR processing UNICORN reload...."
+          end
             
             
           end # end of find servers
-          
-          
-          # if remote_file_exists?(unicorn_pid) && pid_running?(unicorn_pid)
-    #       # if pid_running?(unicorn_pid)
-    #         puts "UNICORN RUNNING, reloading"
-    #         run "kill -s USR2 `cat #{unicorn_pid}`"
-    #         unicorn.graceful_stop_old
-    #       elsif remote_file_exists?(unicorn_pid)
-    #         puts "REMOVING old UNICORN PID"
-    #         run "rm #{unicorn_pid}"
-    #         unicorn.start
-    #       else
-    #         unicorn.start
-    #       end
-        # end
-        
+                  
         end #end of reload task
+        
+        def scrub_exit_value(host, responses)
+          retval = responses[host] || []
+          retval = retval.last
+          retval = retval.strip if retval.present?
+          retval = retval.to_i if retval.present? && retval.match?(\d+)
+          
+          return retval
+        end #end of find_exit_value
 
-      def remote_file_exists?(full_path)
+      # def remote_file_exists?(full_path)
         # begin
         #   #'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
         #   # v = run("if [ -e #{full_path} ]; then echo true; else echo false; fi")
@@ -110,7 +172,7 @@ module Capistrano
         #   return false
         # end
         
-      end # end of remote file exits
+      # end # end of remote file exits
 
       def pid_running?(pid_file)
         begin
