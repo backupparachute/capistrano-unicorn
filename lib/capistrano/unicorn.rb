@@ -50,16 +50,18 @@ module Capistrano
             
             retval = resp[current_server.host]
             
+            puts " EVAL unicorn status for host: #{current_server.host} = #{retval}"
+            
             if retval == 0
-              puts "UNICORN RUNNING, reloading"
+              puts "#{current_server.host} :: UNICORN RUNNING, reloading"
               run "kill -s USR2 `cat #{unicorn_pid}`", :hosts => current_server.host
             elsif retval == 2
-              puts "NOT RUNNING, but file exists..."
-              puts "REMOVING old UNICORN PID"
+              puts "#{current_server.host} :: NOT RUNNING, but file exists..."
+              puts "#{current_server.host} :: REMOVING old UNICORN PID"
               run "rm #{unicorn_pid}", :hosts => current_server.host
               run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
             else
-              puts "STARTING UNICORN...."
+              puts "#{current_server.host} :: STARTING UNICORN...."
               run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
             end
             
@@ -127,7 +129,7 @@ module Capistrano
           
             # run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
         #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-            puts "--> #{data}"
+            puts "#{channel[:host]} --> #{data}"
         #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
         #       return data.strip if stream == :out
           end
