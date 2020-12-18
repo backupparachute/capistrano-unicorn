@@ -112,7 +112,7 @@ module Capistrano
             
             begin
               
-              retval = scrub_exit_value(current_server.host, resp)
+              retval = scrub_exit_value(current_server.host, resp[current_server.host])
             
               puts " EVAL unicorn PID status for host: #{current_server.host} = #{retval}"
             
@@ -138,13 +138,16 @@ module Capistrano
                   
         end #end of reload task
         
-        def scrub_exit_value(host, responses)
-          retval = responses[host] || []
-          retval = retval.last
-          retval = retval.strip if retval.present?
-          retval = retval.to_i if retval.present? && retval.match?(/\d+/)
+        def scrub_exit_value(host, val)
+          retval = val || []
           
-          return retval
+          puts " raw responses for host: #{current_server.host} = #{retval}"
+          
+          retval = retval.last unless retval.blank?
+          retval = retval.strip unless retval.blank?
+          retval = retval.to_i if !retval.blank? && retval.match?(/\d+/)
+          
+          return retval || ""
         end #end of find_exit_value
 
       # def remote_file_exists?(full_path)
