@@ -30,7 +30,7 @@ module Capistrano
             
             find_servers_for_task(current_task).each do |current_server|
             
-              begin
+              # begin
               
                 retval = scrub_exit_value(current_server.host, resp)
             
@@ -41,9 +41,9 @@ module Capistrano
                   run "kill `cat #{unicorn_pid}`", :hosts => current_server.host
                 end
             
-            rescue
-                puts "#{current_server.host} :: ERROR processing UNICORN reload...."
-            end
+            # rescue
+            #     puts "#{current_server.host} :: ERROR processing UNICORN reload...."
+            # end
             
             
             end # end of find servers
@@ -59,7 +59,7 @@ module Capistrano
           
           find_servers_for_task(current_task).each do |current_server|
           
-            begin
+            # begin
             
               retval = scrub_exit_value(current_server.host, resp)
           
@@ -70,9 +70,9 @@ module Capistrano
                 run "kill -s QUIT `cat #{unicorn_pid}`"
               end
           
-          rescue
-              puts "#{current_server.host} :: ERROR processing UNICORN reload...."
-          end
+          # rescue
+  #             puts "#{current_server.host} :: ERROR processing UNICORN reload...."
+  #         end
           
           end # end of find servers
           
@@ -86,7 +86,7 @@ module Capistrano
           resp = pid_running?(unicorn_old_pid)
           find_servers_for_task(current_task).each do |current_server|
           
-            begin
+            # begin
             
               retval = scrub_exit_value(current_server.host, resp)
           
@@ -97,9 +97,9 @@ module Capistrano
                 run "kill -s QUIT `cat #{unicorn_old_pid}`"
               end
           
-          rescue
-              puts "#{current_server.host} :: ERROR processing UNICORN reload...."
-          end
+          # rescue
+   #            puts "#{current_server.host} :: ERROR processing UNICORN reload...."
+   #        end
           
           end # end of find servers
         end
@@ -110,7 +110,7 @@ module Capistrano
           
           find_servers_for_task(current_task).each do |current_server|
             
-            begin
+            # begin
               
               retval = scrub_exit_value(current_server.host, resp[current_server.host])
             
@@ -129,9 +129,9 @@ module Capistrano
                 run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
               end
             
-          rescue
-              puts "#{current_server.host} :: ERROR processing UNICORN reload...."
-          end
+          # rescue
+          #     puts "#{current_server.host} :: ERROR processing UNICORN reload...."
+          # end
             
             
           end # end of find servers
