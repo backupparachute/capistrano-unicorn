@@ -44,19 +44,40 @@ module Capistrano
         desc "reload unicorn"
         task :reload, :roles => :app, :except => { :no_release => true } do
           
-          if remote_file_exists?(unicorn_pid) && pid_running?(unicorn_pid)            
-          # if pid_running?(unicorn_pid)
-            puts "UNICORN RUNNING, reloading"
-            run "kill -s USR2 `cat #{unicorn_pid}`"
-            unicorn.graceful_stop_old
-          elsif remote_file_exists?(unicorn_pid)
-            puts "REMOVING old UNICORN PID"
-            run "rm #{unicorn_pid}"
-            unicorn.start
-          else
-            unicorn.start
+          resp = pid_running?(unicorn_pid)
+          
+          find_servers_for_task(current_task).each do |current_server|
+            
+            retval = resp[current_server.host]
+            
+            if retval == 0
+              run "kill -s USR2 `cat #{unicorn_pid}`", hosts => current_server.host
+            elsif retval == 2
+              run "rm #{unicorn_pid}", hosts => current_server.host
+              run "cd #{current_path} && #{unicorn_binary}", hosts => current_server.host
+            else
+              run "cd #{current_path} && #{unicorn_binary}", hosts => current_server.host
+            end
+            
+            
           end
-        end
+          
+          
+          
+          
+          # if remote_file_exists?(unicorn_pid) && pid_running?(unicorn_pid)
+    #       # if pid_running?(unicorn_pid)
+    #         puts "UNICORN RUNNING, reloading"
+    #         run "kill -s USR2 `cat #{unicorn_pid}`"
+    #         unicorn.graceful_stop_old
+    #       elsif remote_file_exists?(unicorn_pid)
+    #         puts "REMOVING old UNICORN PID"
+    #         run "rm #{unicorn_pid}"
+    #         unicorn.start
+    #       else
+    #         unicorn.start
+    #       end
+        # end
       end
 
 
@@ -88,18 +109,26 @@ module Capistrano
 
       def pid_running?(pid_file)
         begin
+          results = {}
           #retval = capture("ps -ef | grep `cat #{pid_file}` | grep -v grep").strip
           puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
           # run("ps -ef | grep `cat #{pid_file}` | grep -v grep")
-          run("pgrep -P `cat #{pid_file}` && echo 0 || echo 1")
-          puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+          # run("pgrep -P `cat #{pid_file}` && echo 0 || echo 1")
+          run "if [ -e #{pid_file} ]; then pgrep -P `cat #{pid_file}` && echo 0 || echo 1; else echo 2; fi" do |channel, stream, data|
+
+          results[channel[:host]] = [] unless results.key?(channel[:host])
+          results[channel[:host]] << data if stream == :out
+          results[channel[:host]] = data if stream == :err
+          next if stream == :err
+          
           # run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
       #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
       #       puts "PID RUNNING: #{data}"
       #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
       #       return data.strip if stream == :out
-      #     end
-          return true
+          end
+          puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+          return results
         rescue
           puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
           puts "PID DOWN..."
