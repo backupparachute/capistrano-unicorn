@@ -67,7 +67,7 @@ module Capistrano
           
               if retval == 0
                 puts "#{current_server.host} :: UNICORN RUNNING, graceful stop..."
-                run "kill -s QUIT `cat #{unicorn_pid}`"
+                run "kill -s QUIT `cat #{unicorn_pid}`", :hosts => current_server.host
               end
           
           # rescue
@@ -94,7 +94,7 @@ module Capistrano
           
               if retval == 0
                 puts "#{current_server.host} :: UNICORN RUNNING, graceful stop OLD..."
-                run "kill -s QUIT `cat #{unicorn_old_pid}`"
+                run "kill -s QUIT `cat #{unicorn_old_pid}`", :hosts => current_server.host
               end
           
           # rescue
@@ -184,7 +184,7 @@ module Capistrano
           puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
           # run("ps -ef | grep `cat #{pid_file}` | grep -v grep")
           # run("pgrep -P `cat #{pid_file}` && echo 0 || echo 1")
-          run "if [ -e #{pid_file} ]; then pgrep -P `cat #{pid_file}` && echo 0 || echo 1; else echo 2; fi" do |channel, stream, data|
+          run "if [ -e #{pid_file} ]; then pgrep -P `cat #{pid_file}` && echo 0 || echo 2; else echo 1; fi" do |channel, stream, data|
 
             results[channel[:host]] = [] unless results.key?(channel[:host])
             results[channel[:host]] << data if stream == :out
