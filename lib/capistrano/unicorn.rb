@@ -145,7 +145,7 @@ module Capistrano
           
           retval = retval.last unless retval.blank?
           retval = retval.strip unless retval.blank?
-          retval = retval.to_i if !retval.blank? && retval.match?(/\d+/)
+          retval = retval.to_i if !retval.blank? && retval.match(/\d+/)
           
           return retval || ""
         end #end of find_exit_value
