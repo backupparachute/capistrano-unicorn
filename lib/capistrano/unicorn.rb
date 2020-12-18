@@ -141,7 +141,7 @@ module Capistrano
         def scrub_exit_value(host, val)
           retval = val || []
           
-          puts " raw responses for host: #{current_server.host} = #{retval}"
+          puts " raw responses for host: #{host} = #{retval}"
           
           retval = retval.last unless retval.blank?
           retval = retval.strip unless retval.blank?
