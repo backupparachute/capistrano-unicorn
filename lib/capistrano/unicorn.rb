@@ -142,7 +142,7 @@ module Capistrano
           retval = responses[host] || []
           retval = retval.last
           retval = retval.strip if retval.present?
-          retval = retval.to_i if retval.present? && retval.match?(\d+)
+          retval = retval.to_i if retval.present? && retval.match?(/\d+/)
           
           return retval
         end #end of find_exit_value
