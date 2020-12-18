@@ -51,12 +51,16 @@ module Capistrano
             retval = resp[current_server.host]
             
             if retval == 0
-              run "kill -s USR2 `cat #{unicorn_pid}`", hosts => current_server.host
+              puts "UNICORN RUNNING, reloading"
+              run "kill -s USR2 `cat #{unicorn_pid}`", :hosts => current_server.host
             elsif retval == 2
-              run "rm #{unicorn_pid}", hosts => current_server.host
-              run "cd #{current_path} && #{unicorn_binary}", hosts => current_server.host
+              puts "NOT RUNNING, but file exists..."
+              puts "REMOVING old UNICORN PID"
+              run "rm #{unicorn_pid}", :hosts => current_server.host
+              run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
             else
-              run "cd #{current_path} && #{unicorn_binary}", hosts => current_server.host
+              puts "STARTING UNICORN...."
+              run "cd #{current_path} && #{unicorn_binary}", :hosts => current_server.host
             end
             
             
@@ -115,16 +119,17 @@ module Capistrano
           # run("pgrep -P `cat #{pid_file}` && echo 0 || echo 1")
           run "if [ -e #{pid_file} ]; then pgrep -P `cat #{pid_file}` && echo 0 || echo 1; else echo 2; fi" do |channel, stream, data|
 
-          results[channel[:host]] = [] unless results.key?(channel[:host])
-          results[channel[:host]] << data if stream == :out
-          results[channel[:host]] = data if stream == :err
-          next if stream == :err
+            results[channel[:host]] = [] unless results.key?(channel[:host])
+            results[channel[:host]] << data if stream == :out
+            results[channel[:host]] = data if stream == :err
+            next if stream == :err
           
-          # run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
-      #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-      #       puts "PID RUNNING: #{data}"
-      #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-      #       return data.strip if stream == :out
+          
+            # run "ps -ef | grep `cat #{pid_file}` | grep -v grep" do |channel, stream, data|
+        #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+            puts "--> #{data}"
+        #       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        #       return data.strip if stream == :out
           end
           puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
           return results
