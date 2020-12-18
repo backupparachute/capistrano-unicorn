@@ -60,9 +60,7 @@ module Capistrano
             end
             
             
-          end
-          
-          
+          end # end of find servers
           
           
           # if remote_file_exists?(unicorn_pid) && pid_running?(unicorn_pid)
@@ -78,34 +76,35 @@ module Capistrano
     #         unicorn.start
     #       end
         # end
-      end
-
+        
+      end #end of reload task
 
       def remote_file_exists?(full_path)
-        begin
-          #'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
-          # v = run("if [ -e #{full_path} ]; then echo true; else echo false; fi")
-          
-          #results = {}
-          retval = ""
-          run "if [ -e #{full_path} ]; then echo 'true'; else echo 'false'; fi" do |channel, stream, data|
-            return false if stream == :err
-            
-            retval << data
-            # if stream == :out
-              #results[channel[:host]] = [] unless results.key?(channel[:host])
-              # results[channel[:host]] << data if stream == :out
-              # puts "remote file reponse: #{data}" if stream == :out
-              # return 'true' == data.strip if stream == :out
-            # end
-          end
-          puts "does file exist? #{retval}"
-          return 'true' == retval.to_s
-        rescue
-          puts "remote file DOES NOT exist..."
-          return false
-        end
-      end
+        # begin
+        #   #'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+        #   # v = run("if [ -e #{full_path} ]; then echo true; else echo false; fi")
+        #
+        #   #results = {}
+        #   retval = ""
+        #   run "if [ -e #{full_path} ]; then echo 'true'; else echo 'false'; fi" do |channel, stream, data|
+        #     return false if stream == :err
+        #
+        #     retval << data
+        #     # if stream == :out
+        #       #results[channel[:host]] = [] unless results.key?(channel[:host])
+        #       # results[channel[:host]] << data if stream == :out
+        #       # puts "remote file reponse: #{data}" if stream == :out
+        #       # return 'true' == data.strip if stream == :out
+        #     # end
+        #   end
+        #   puts "does file exist? #{retval}"
+        #   return 'true' == retval.to_s
+        # rescue
+        #   puts "remote file DOES NOT exist..."
+        #   return false
+        # end
+        
+      end # end of remote file exits
 
       def pid_running?(pid_file)
         begin
@@ -134,13 +133,15 @@ module Capistrano
           puts "PID DOWN..."
           puts "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
           return false
-        end
-      end
-
-    end
+        end # end begin / rescue
+      end # end of pid_running
 
 
+
+    end # end of namespace
+
+  end #end of config if
+  
   end
-
-  end
+  
 end
