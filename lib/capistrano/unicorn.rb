@@ -119,6 +119,8 @@ module Capistrano
               if retval == 0
                 puts "#{current_server.host} :: UNICORN RUNNING, reloading"
                 run "kill -s USR2 `cat #{unicorn_pid}`", :hosts => current_server.host
+                puts "#{current_server.host} :: UNICORN RUNNING, killing old unicorn"
+                run "kill -s QUIT `cat #{unicorn_old_pid}`", :hosts => current_server.host
               elsif retval == 2
                 puts "#{current_server.host} :: NOT RUNNING, but file exists..."
                 puts "#{current_server.host} :: REMOVING old UNICORN PID"
